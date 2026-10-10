@@ -1,0 +1,88 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Formulare Urbanism (Legea 169/2026)",
+  "description": "Schema unificata pentru formularele de urbanism conform CATUC",
+  "type": "object",
+  "properties": {
+    "tip_formular": {
+      "type": "string",
+      "enum": [
+        "CERTIFICAT_URBANISM",
+        "AUTORIZATIE_CONSTRUIRE",
+        "AUTORIZATIE_MODIFICARE",
+        "AUTORIZATIE_REGULARIZARE",
+        "PRELUNGIRE",
+        "NOTIFICARE_PROCEDURA_SIMPLIFICATA"
+      ],
+      "description": "Tipul cererii de urbanism."
+    },
+    "solicitant": {
+      "type": "object",
+      "properties": {
+        "tip_persoana": {
+          "type": "string",
+          "enum": ["FIZICA", "JURIDICA"]
+        },
+        "nume_denumire": {
+          "type": "string",
+          "minLength": 2,
+          "description": "Numele complet sau denumirea firmei."
+        },
+        "cnp_cui": {
+          "type": "string",
+          "pattern": "^(RO)?([0-9]{2,10}|[1-9][0-9]{12})$",
+          "description": "CNP sau CUI."
+        },
+        "adresa_domiciliu_sediu": {
+          "type": "string",
+          "minLength": 5
+        },
+        "telefon": {
+          "type": "string",
+          "pattern": "^\\+?[0-9]{10,15}$"
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        }
+      },
+      "required": ["tip_persoana", "nume_denumire", "cnp_cui", "adresa_domiciliu_sediu", "telefon"]
+    },
+    "imobil": {
+      "type": "object",
+      "properties": {
+        "judet": { "type": "string" },
+        "localitate": { "type": "string" },
+        "adresa": { "type": "string" },
+        "nr_cadastral": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "nr_carte_funciara": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        }
+      },
+      "required": ["judet", "localitate", "adresa", "nr_cadastral", "nr_carte_funciara"]
+    },
+    "detalii_solicitare": {
+      "type": "object",
+      "properties": {
+        "scopul_solicitarii": {
+          "type": "string",
+          "minLength": 10
+        },
+        "valoare_estimata_lucrari": {
+          "type": "number",
+          "minimum": 0
+        },
+        "documentatii_anexate": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "required": ["scopul_solicitarii"]
+    }
+  },
+  "required": ["tip_formular", "solicitant", "imobil", "detalii_solicitare"]
+}

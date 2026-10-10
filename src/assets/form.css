@@ -1,0 +1,338 @@
+.physical-form-container {
+  font-family: "Times New Roman", serif;
+  font-size: 14px;
+  color: black;
+  background: white;
+  padding: 40px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  overflow-x: auto;
+}
+
+.physical-form-container table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.physical-form-container th, 
+.physical-form-container td {
+  border: 1px solid black;
+  padding: 6px;
+  vertical-align: top;
+}
+
+.physical-form-container p {
+  margin: 0 0 4px 0;
+}
+
+/* Checkbox and Checklist Styles */
+.physical-form-container input[type="checkbox"],
+.physical-form-container .form-checkbox {
+  appearance: auto;
+  -webkit-appearance: checkbox;
+  width: 14px;
+  height: 14px;
+  margin: 0 4px 0 2px;
+  vertical-align: -2px;
+  cursor: pointer;
+  accent-color: #1976d2;
+}
+
+.physical-form-container ul.form-checklist {
+  list-style: none !important;
+  margin: 4px 0 !important;
+  padding: 0 !important;
+}
+
+.physical-form-container ul.form-checklist li {
+  list-style: none !important;
+  margin: 3px 0 !important;
+  padding: 0 !important;
+  line-height: 1.5;
+}
+
+/* Legacy inline input styling */
+.inline-input {
+  width: 100%;
+  border: none;
+  border-bottom: 1px dotted #999;
+  font-family: inherit;
+  font-size: inherit;
+  background: transparent;
+  outline: none;
+}
+.inline-input:focus {
+  border-bottom: 1px solid black;
+}
+
+/* --- Print Styles --- */
+@media print {
+  @page {
+    /* Top, Right, Bottom, Left (2cm for binding margin / îndosariere) */
+    margin: 1cm 1cm 1cm 2cm;
+    size: A4 portrait;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Reset outer container */
+  #urbanism-form,
+  .physical-form-container {
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    overflow: visible !important;
+  }
+
+  /* Prevent table rows and cells from splitting across pages */
+  .physical-form-container table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    page-break-inside: auto;
+  }
+
+  .physical-form-container tr,
+  .physical-form-container td,
+  .physical-form-container th {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Ensure table borders print sharply in black */
+  .physical-form-container th, 
+  .physical-form-container td {
+    border: 1px solid #000000 !important;
+  }
+
+  /* Checkboxes in print */
+  .physical-form-container input[type="checkbox"],
+  .physical-form-container .form-checkbox {
+    appearance: auto !important;
+    -webkit-appearance: checkbox !important;
+    display: inline-block !important;
+    width: 13px !important;
+    height: 13px !important;
+    margin: 0 4px 0 2px !important;
+    vertical-align: -1px !important;
+    border: 1.5px solid #000000 !important;
+    background: #ffffff !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* --- In print we should NOT use input boxes. We should use very high weight text --- */
+
+  /* 1. Remove input container styling (no boxes, no grey backgrounds, no borders, no rounded corners) */
+  .physical-form-container .MuiFormControl-root,
+  .physical-form-container .MuiTextField-root,
+  .physical-form-container .MuiInputBase-root,
+  .physical-form-container .MuiOutlinedInput-root,
+  .physical-form-container .MuiFilledInput-root,
+  .physical-form-container .MuiInput-root {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    min-height: unset !important;
+    height: auto !important;
+  }
+
+  /* Hide borders and outlines */
+  .physical-form-container fieldset,
+  .physical-form-container .MuiOutlinedInput-notchedOutline {
+    display: none !important;
+    border: none !important;
+  }
+
+  .physical-form-container .MuiFilledInput-root:before,
+  .physical-form-container .MuiFilledInput-root:after {
+    display: none !important;
+  }
+
+  /* 2. Format input contents as very high weight plain text (excluding checkboxes) */
+  .physical-form-container input:not([type="checkbox"]),
+  .physical-form-container textarea,
+  .physical-form-container .MuiInputBase-input,
+  .physical-form-container .MuiInputBase-inputMultiline,
+  .physical-form-container .MuiFilledInput-input,
+  .physical-form-container .MuiOutlinedInput-input,
+  .physical-form-container .MuiSelect-select,
+  .physical-form-container .inline-input {
+    font-family: inherit !important;
+    font-size: 13px !important;
+    font-weight: 900 !important; /* Very high weight text */
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    padding: 2px 0 !important;
+    margin: 0 !important;
+    height: auto !important;
+    min-height: unset !important;
+    line-height: 1.3 !important;
+    letter-spacing: normal !important;
+  }
+
+  /* Multiline textareas should expand cleanly */
+  .physical-form-container textarea,
+  .physical-form-container .MuiInputBase-inputMultiline {
+    resize: none !important;
+    overflow: visible !important;
+    white-space: pre-wrap !important;
+    field-sizing: content !important;
+  }
+
+  /* 3. Hide adornments, clear indicators, dropdown arrows and floating labels */
+  .physical-form-container .MuiInputLabel-root,
+  .physical-form-container .MuiAutocomplete-endAdornment,
+  .physical-form-container .MuiAutocomplete-clearIndicator,
+  .physical-form-container .MuiAutocomplete-popupIndicator,
+  .physical-form-container .MuiSelect-icon,
+  .physical-form-container .MuiIconButton-root,
+  .physical-form-container .MuiInputAdornment-root {
+    display: none !important;
+  }
+}
+
+/* Global fix for overly large headings in physical forms */
+.physical-form-container h1 {
+  font-size: 24px !important;
+  text-align: center;
+  margin-top: 0;
+}
+
+.physical-form-container h2 {
+  font-size: 20px !important;
+}
+
+.physical-form-container h3 {
+  font-size: 18px !important;
+}
+
+/* Wrapper to align inputs to the bottom of the table cells */
+.physical-form-container td {
+  height: 1px; /* Allows inner height: 100% to stretch to the actual cell grid height */
+}
+
+.td-flex-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.td-flex-wrapper > .MuiFormControl-root,
+.td-flex-wrapper > .MuiTextField-root,
+.td-flex-wrapper > .MuiAutocomplete-root {
+  margin-top: auto !important;
+}
+
+@media print {
+  .td-flex-wrapper {
+    display: block !important;
+    height: auto !important;
+  }
+}
+
+/* Drop the dots for all lists (like utilities in tables) */
+.physical-form-container ul {
+  list-style: none !important;
+  padding-left: 0 !important;
+  margin-left: 0 !important;
+}
+
+.physical-form-container ul li {
+  list-style: none !important;
+}
+
+/* Hide interactive action buttons in print mode */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
+
+/* ========================================================= */
+/* STRICT LEFT-ALIGNMENT FOR ALL CHECKBOX MULTIPLE OPTIONS   */
+/* ========================================================= */
+
+.checkbox-group-left,
+.physical-form-container .checkbox-group-left {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+  gap: 8px 16px !important;
+  text-align: left !important;
+  margin: 4px 0 !important;
+  padding: 0 !important;
+}
+
+.checkbox-item,
+.physical-form-container .checkbox-item {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  text-align: left !important;
+  gap: 5px !important;
+  font-size: 13px !important;
+  cursor: pointer !important;
+  margin: 2px 0 !important;
+}
+
+.physical-form-container ul.form-checklist,
+.physical-form-container ul:has(input[type="checkbox"]),
+.physical-form-container ol:has(input[type="checkbox"]) {
+  list-style: none !important;
+  margin: 4px 0 !important;
+  padding: 0 !important;
+  text-align: left !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+  gap: 6px 14px !important;
+}
+
+.physical-form-container ul.form-checklist li,
+.physical-form-container li:has(input[type="checkbox"]) {
+  list-style: none !important;
+  margin: 2px 0 !important;
+  padding: 0 !important;
+  text-align: left !important;
+  display: inline-flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 6px !important;
+  line-height: 1.4 !important;
+}
+
+.physical-form-container td:has(input[type="checkbox"]) {
+  text-align: left !important;
+}
+
+.physical-form-container td:has(input[type="checkbox"]) p {
+  text-align: left !important;
+}
+
+.physical-form-container label:has(input[type="checkbox"]) {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  text-align: left !important;
+}
