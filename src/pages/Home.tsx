@@ -13,6 +13,14 @@ export default function Home() {
 
   useEffect(() => {
     loadForms();
+    document.title = 'e-urban.ro | Asistent Formulare Urbanism & Construcții (Legea 169/2026)';
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      metaDesc.setAttribute(
+        'content',
+        'Platformă digitală pentru asistență procedurală, completare și descărcare a formularelor oficiale de urbanism și autorizații de construire conform noului Cod al Urbanismului (Legea nr. 169/2026 - CATUC).'
+      );
+    }
   }, []);
 
   const handleDeleteClick = (id: string) => {

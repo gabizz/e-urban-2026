@@ -9,6 +9,7 @@ import { Printer, Save } from 'lucide-react';
 
 import * as Forms from '../components/forms/generated';
 import DocumentSelectMenu from '../components/DocumentSelectMenu';
+import { getDocumentById } from '../data/documentTypes';
 
 export const formMap: Record<string, React.FC> = {
   // Backwards compatibility
@@ -46,7 +47,14 @@ export default function FormPage() {
   useEffect(() => {
     if (id && id !== 'new') {
       getForm(id).then(form => {
-        if (form) setInitialData(form.data);
+        if (form) {
+          setInitialData(form.data);
+        } else if (getDocumentById(id)) {
+          // If the URL matches an official document ID or alias, initialize directly with that form type
+          setInitialData({ tip_formular: id });
+        } else {
+          setInitialData({});
+        }
         setLoading(false);
       });
     } else {
@@ -81,6 +89,19 @@ function FormContainer({ initialData }: any) {
 
   const { handleSubmit, watch, register, setValue } = methods;
   const tipFormular = watch('tip_formular');
+
+  useEffect(() => {
+    const doc = getDocumentById(tipFormular);
+    if (doc) {
+      document.title = `${doc.title} (${doc.legalBase}) | e-urban.ro`;
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) {
+        metaDesc.setAttribute('content', `${doc.title} - ${doc.purpose} Conform ${doc.legalBase}.`);
+      }
+    } else {
+      document.title = 'Completare Formular Urbanism | e-urban.ro';
+    }
+  }, [tipFormular]);
 
   const onSubmit = async (formData: any) => {
     formData.id = initialData.id || Date.now().toString();

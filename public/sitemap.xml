@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Homepage -->
+  <url>
+    <loc>https://e-urban.ro/</loc>
+    <lastmod>2026-10-10</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://e-urban.ro/form/new</loc>
+    <lastmod>2026-10-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Etapa 1: Certificat de Urbanism -->
+  <url>
+    <loc>https://e-urban.ro/form/CERERECERTIFICATDEURBANISMCONSTRUIREDESFIINTARE</loc>
+    <lastmod>2026-10-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://e-urban.ro/form/CERERECERTIFICATDEURBANISMDEINFORMARE</loc>
+    <lastmod>2026-10-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://e-urban.ro/form/CERERECERTIFICATDEURBANISMPENTRUOPERATIUNICADASTRALE</loc>
+    <lastmod>2026-10-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://e-urban.ro/form/CEREREPRELUNGIRECERTIFICATDEURBANISM</loc>
+    <lastmod>2026-10-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Etapa 2: Autorizație de Construire -->
+  <url>
+    <loc>https://e-urban.ro/form/CEREREAUTORIZATIEDECONSTRUIRE</loc>
+    <lastmod>2026-10-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://e-urban.ro/form/ANEXAAUTORIZATIEDECONSTRUIRE</loc>
+    <lastmod>2026-10-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://e-urban.ro/form/CEREREAUTORIZATIEDEMODIFICARE</loc>
+    <lastmod>2026-10-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://e-urban.ro/form/CEREREAUTORIZATIEDEREGULARIZARE</loc>
+    <lastmod>2026-10-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://e-urban.ro/form/CEREREPRELUNGIREAUTORIZATIEDECONSTRUIRE</loc>
+    <lastmod>2026-10-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://e-urban.ro/form/CEREREAVIZDEAMPLASARE</loc>
+    <lastmod>2026-10-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Procedură Simplificată -->
+  <url>
+    <loc>https://e-urban.ro/form/NOTIFICAREPROCEDURASIMPLIFICATA</loc>
+    <lastmod>2026-10-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://e-urban.ro/form/DECLARATIAPEPROPRIARASPUNDERE</loc>
+    <lastmod>2026-10-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Etapa 3: Execuție Lucrări & Recepție -->
+  <url>
+    <loc>https://e-urban.ro/form/INSTIINTAREINCEPEREEXECUTIELUCRARI</loc>
+    <lastmod>2026-10-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://e-urban.ro/form/INSTIINTAREPRIVINDINCHEIEREAEXECUTIEILUCRARILOR</loc>
+    <lastmod>2026-10-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://e-urban.ro/form/SOLICITAREUATRECEPTIE</loc>
+    <lastmod>2026-10-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+</urlset>

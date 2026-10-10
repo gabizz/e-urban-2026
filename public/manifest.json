@@ -1,0 +1,17 @@
+{
+  "name": "e-urban.ro - Asistent Formulare Urbanism",
+  "short_name": "e-urban.ro",
+  "description": "Platformă digitală pentru asistență și completare a formularelor de urbanism conform Legii nr. 169/2026 (CATUC).",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1976d2",
+  "lang": "ro",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
