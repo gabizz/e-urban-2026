@@ -10,6 +10,8 @@ import { Printer, Save } from 'lucide-react';
 import * as Forms from '../components/forms/generated';
 import DocumentSelectMenu from '../components/DocumentSelectMenu';
 import { getDocumentById } from '../data/documentTypes';
+import { useFormCustomization } from '../contexts/FormCustomizationContext';
+import { buildInstitutionName } from '../services/uat';
 
 export const formMap: Record<string, React.FC> = {
   // Backwards compatibility
@@ -74,7 +76,7 @@ function FormContainer({ initialData }: any) {
 
   const methods = useForm({
     defaultValues: {
-      tip_formular: 'CEREREAUTORIZATIEDECONSTRUIRE',
+      tip_formular: initialData?.tip_formular || '',
       solicitant: {
         tip_persoana: 'FIZICA',
         nume_denumire: '',
@@ -89,9 +91,39 @@ function FormContainer({ initialData }: any) {
 
   const { handleSubmit, watch, register, setValue } = methods;
   const tipFormular = watch('tip_formular');
+  const { uatDetails } = useFormCustomization();
 
   useEffect(() => {
-    const doc = getDocumentById(tipFormular);
+    if (uatDetails) {
+      if (uatDetails.Judet) {
+        setValue('jude_ul', uatDetails.Judet, { shouldValidate: true, shouldDirty: true });
+      }
+      if (uatDetails.Localitate) {
+        setValue('localitatea_uat', uatDetails.Localitate, { shouldValidate: true, shouldDirty: true });
+        setValue('municipiul_ora_ul_comuna', uatDetails.Localitate, { shouldValidate: true, shouldDirty: true });
+      }
+      if (uatDetails.cui) {
+        setValue('cod_de_identificare_fiscal_cif', uatDetails.cui, { shouldValidate: true, shouldDirty: true });
+      }
+
+      const email = uatDetails['E-mail general'] || uatDetails['E-mail registratura'] || '';
+      const address = uatDetails.Adresa || '';
+      const fullAddress = email ? `${address}\nEmail: ${email}` : address;
+      if (fullAddress) {
+        setValue('adresa_oficial', fullAddress, { shouldValidate: true, shouldDirty: true });
+      }
+
+      if (uatDetails.Localitate) {
+        const institutionName = buildInstitutionName(uatDetails.Localitate);
+        setValue('institu_iaprim_ria_municipiulu', institutionName, { shouldValidate: true, shouldDirty: true });
+        setValue('institu_ia', institutionName, { shouldValidate: true, shouldDirty: true });
+        setValue('institu_ia_entitatea_de_la_car', institutionName, { shouldValidate: true, shouldDirty: true });
+      }
+    }
+  }, [uatDetails, setValue]);
+
+  useEffect(() => {
+    const doc = tipFormular ? getDocumentById(tipFormular) : undefined;
     if (doc) {
       document.title = `${doc.title} (${doc.legalBase}) | e-urban.ro`;
       const metaDesc = document.querySelector('meta[name="description"]');
@@ -113,7 +145,7 @@ function FormContainer({ initialData }: any) {
     contentRef: printRef,
   });
 
-  const ActiveFormComponent = formMap[tipFormular] || Forms.CEREREAUTORIZATIEDECONSTRUIRE;
+  const ActiveFormComponent = tipFormular ? (formMap[tipFormular] || null) : null;
 
   return (
     <Box sx={{ p: { xs: 1.5, sm: 3, md: 4 }, minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -202,7 +234,18 @@ function FormContainer({ initialData }: any) {
             ref={printRef}
           >
             <form id="urbanism-form" onSubmit={handleSubmit(onSubmit)}>
-              <ActiveFormComponent />
+              {ActiveFormComponent ? (
+                <ActiveFormComponent />
+              ) : (
+                <Box sx={{ p: { xs: 4, sm: 8 }, textAlign: 'center' }}>
+                  <Typography variant="h6" sx={{ fontWeight: 600, color: '#334155', mb: 1 }}>
+                    Niciun formular selectat
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: '#64748b', mb: 3 }}>
+                    Vă rugăm să alegeți tipul de formular dorit din meniul de mai sus pentru a începe completarea.
+                  </Typography>
+                </Box>
+              )}
             </form>
           </Box>
 

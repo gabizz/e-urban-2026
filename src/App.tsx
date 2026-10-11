@@ -9,6 +9,7 @@ import Home from './pages/Home';
 import FormPage from './pages/FormPage';
 import About from './pages/About';
 import theme from './theme';
+import { FormCustomizationProvider } from './contexts/FormCustomizationContext';
 
 function App() {
   return (
@@ -16,77 +17,85 @@ function App() {
       <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ro}>
         <CssBaseline />
         <BrowserRouter>
-          <AppBar position="static" sx={{ borderRadius: { xs: 0, sm: '0 0 1em 1em' } }} color="primary">
-            <Toolbar sx={{ px: { xs: 1.5, sm: 3 }, minHeight: { xs: 56, sm: 64 } }}>
-              <Tooltip title="Acasă">
-                <IconButton
-                  color="inherit"
-                  component={Link}
-                  to="/"
-                  edge="start"
-                  aria-label="Acasă"
-                  sx={{ mr: { xs: 0.5, sm: 1.5 } }}
-                >
-                  <HomeRoundedIcon fontSize="medium" />
-                </IconButton>
-              </Tooltip>
+          <FormCustomizationProvider>
+            <AppBar position="static" sx={{ borderRadius: { xs: 0, sm: '0 0 1em 1em' } }} color="primary">
+              <Toolbar sx={{ px: { xs: 1.5, sm: 3 }, minHeight: { xs: 56, sm: 64 } }}>
+                <Tooltip title="Acasă">
+                  <IconButton
+                    color="inherit"
+                    component={Link}
+                    to="/"
+                    edge="start"
+                    aria-label="Acasă"
+                    sx={{
+                      p: 1,
+                      mr: { xs: 0.5, sm: 1.5 },
+                      transition: 'all 0.2s ease',
+                      '&:hover': {
+                        backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                        transform: 'scale(1.1)',
+                      },
+                    }}
+                  >
+                    <HomeRoundedIcon sx={{ fontSize: { xs: 28, sm: 34 } }} />
+                  </IconButton>
+                </Tooltip>
 
-              <Typography
-                variant="h6"
-                component="div"
-                sx={{
-                  flexGrow: 1,
-                  fontWeight: 700,
-                  fontSize: { xs: '0.95rem', sm: '1.25rem' },
-                  lineHeight: 1.2,
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  pr: 1,
-                }}
-              >
-                e-urban.ro
                 <Typography
-                  component="span"
+                  variant="h6"
+                  component="div"
                   sx={{
-                    display: { xs: 'none', sm: 'inline' },
-                    fontSize: 'inherit',
-                    fontWeight: 400,
-                    opacity: 0.9,
-                    ml: 1,
+                    flexGrow: 1,
+                    fontWeight: 700,
+                    fontSize: { xs: '0.95rem', sm: '1.25rem' },
+                    lineHeight: 1.2,
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    pr: 1,
                   }}
                 >
-                  — Asistent Formulare (Legea 169/2026)
+                  e-urban.ro
+                  <Typography
+                    component="span"
+                    sx={{
+                      display: { xs: 'none', sm: 'inline' },
+                      fontSize: 'inherit',
+                      fontWeight: 400,
+                      opacity: 0.9,
+                      ml: 1,
+                    }}
+                  >
+                    — Asistent Formulare (Legea 169/2026)
+                  </Typography>
                 </Typography>
-              </Typography>
 
-              <Tooltip title="Manual de utilizare & Informații legale (GDPR)">
-                <IconButton
-                  component={Link}
-                  to="/about"
-                  aria-label="Despre aplicație și manual"
-                  sx={{
-                    width: { xs: 34, sm: 38 },
-                    height: { xs: 34, sm: 38 },
-                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                    color: '#ffffff',
-                    transition: 'all 0.2s ease',
-                    '&:hover': {
-                      backgroundColor: 'rgba(255, 255, 255, 0.35)',
-                      transform: 'scale(1.05)',
-                    },
-                  }}
-                >
-                  <HelpRoundedIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
-            </Toolbar>
-          </AppBar>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/form/:id" element={<FormPage />} />
-            <Route path="/about" element={<About />} />
-          </Routes>
+                <Tooltip title="Manual de utilizare & Informații legale (GDPR)">
+                  <IconButton
+                    color="inherit"
+                    component={Link}
+                    to="/about"
+                    aria-label="Despre aplicație și manual"
+                    sx={{
+                      p: 1,
+                      transition: 'all 0.2s ease',
+                      '&:hover': {
+                        backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                        transform: 'scale(1.1)',
+                      },
+                    }}
+                  >
+                    <HelpRoundedIcon sx={{ fontSize: { xs: 28, sm: 34 } }} />
+                  </IconButton>
+                </Tooltip>
+              </Toolbar>
+            </AppBar>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/form/:id" element={<FormPage />} />
+              <Route path="/about" element={<About />} />
+            </Routes>
+          </FormCustomizationProvider>
         </BrowserRouter>
       </LocalizationProvider>
     </ThemeProvider>

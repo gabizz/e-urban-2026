@@ -25,7 +25,7 @@ import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
 import { getForms, deleteForm } from '../services/storage';
 import type { FormSubmission } from '../services/storage';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { PrintButton } from '../components/PrintablePhysicalForm';
 import { DocumentSelectDialog } from '../components/DocumentSelectMenu';
 import { getDocumentById } from '../data/documentTypes';
@@ -44,6 +44,7 @@ function formatFallbackDocName(rawId: string): string {
 
 export default function Home() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [forms, setForms] = useState<FormSubmission[]>([]);
   const [formToDelete, setFormToDelete] = useState<string | null>(null);
   const [selectDocOpen, setSelectDocOpen] = useState(false);
@@ -52,7 +53,8 @@ export default function Home() {
 
   const handleSelectDoc = (docId: string) => {
     setSelectDocOpen(false);
-    navigate(`/form/${docId}`);
+    const search = searchParams.toString();
+    navigate(`/form/${docId}${search ? `?${search}` : ''}`);
   };
 
   useEffect(() => {
@@ -229,7 +231,7 @@ export default function Home() {
                         size="small"
                         variant="outlined"
                         component={Link}
-                        to={`/form/${form.id}`}
+                        to={`/form/${form.id}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`}
                         startIcon={<EditRoundedIcon fontSize="small" />}
                         sx={{
                           flex: 1,
@@ -350,7 +352,7 @@ export default function Home() {
                                 size="small"
                                 variant="outlined"
                                 component={Link}
-                                to={`/form/${form.id}`}
+                                to={`/form/${form.id}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`}
                                 startIcon={<EditRoundedIcon fontSize="small" />}
                                 sx={{
                                   height: 34,

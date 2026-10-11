@@ -61,9 +61,10 @@ interface UATAutocompleteProps {
   type: 'judet' | 'localitate';
   linkedJudetName?: string; 
   onSelectUAT?: (uat: UAT) => void;
+  freeSolo?: boolean;
 }
 
-export default function UATAutocomplete({ label, name, type, linkedJudetName, onSelectUAT, style }: UATAutocompleteProps) {
+export default function UATAutocomplete({ label, name, type, linkedJudetName, onSelectUAT, style, freeSolo }: UATAutocompleteProps) {
   const { control, watch } = useFormContext();
   const [data, setData] = useState<UAT[]>([]);
   const [loading, setLoading] = useState(false);
@@ -102,9 +103,15 @@ export default function UATAutocomplete({ label, name, type, linkedJudetName, on
       render={({ field }) => (
         <Autocomplete style={style}
           {...field}
+          freeSolo={freeSolo}
           options={options}
           loading={loading}
           value={field.value || null}
+          onInputChange={(_, newInputValue) => {
+            if (freeSolo) {
+              field.onChange(newInputValue);
+            }
+          }}
           onChange={(_, newValue) => {
             field.onChange(newValue || '');
             if (type === 'localitate' && onSelectUAT && newValue) {

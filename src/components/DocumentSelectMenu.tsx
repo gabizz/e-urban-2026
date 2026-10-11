@@ -48,19 +48,23 @@ export const DocumentSelectDialog: React.FC<DocumentSelectDialogProps> = ({
   onSelect
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const currentDoc = selectedId ? getDocumentById(selectedId) : undefined;
-
-  // Manage expanded accordions (default open the category of currently selected document)
-  const [expanded, setExpanded] = useState<Record<string, boolean>>(() => ({
-    etapa1: currentDoc?.categoryId === 'etapa1',
-    etapa2: !currentDoc?.categoryId || currentDoc?.categoryId === 'etapa2',
-    simplificata: currentDoc?.categoryId === 'simplificata',
-    etapa3: currentDoc?.categoryId === 'etapa3'
-  }));
+  // Manage expanded accordions (all 4 stages collapsed / not-expanded by default)
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({
+    etapa1: false,
+    etapa2: false,
+    simplificata: false,
+    etapa3: false
+  });
 
   const handleClose = () => {
     onClose();
     setSearchQuery('');
+    setExpanded({
+      etapa1: false,
+      etapa2: false,
+      simplificata: false,
+      etapa3: false
+    });
   };
 
   const handleDocumentClick = (docId: string) => {
@@ -293,7 +297,16 @@ export const DocumentSelectDialog: React.FC<DocumentSelectDialogProps> = ({
                     </AccordionSummary>
 
                     {/* Accordion Details (Document Cards in Stage) */}
-                    <AccordionDetails sx={{ p: { xs: 1.5, sm: 2.5 }, bgcolor: '#ffffff', display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                    <AccordionDetails
+                      sx={{
+                        p: { xs: 1.5, sm: 2.5 },
+                        bgcolor: '#f8fafc',
+                        borderTop: '1px solid #e2e8f0',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 2
+                      }}
+                    >
                       {category.documents.map((doc: DocumentInfo) => {
                         const isSelected = doc.id === selectedId;
 
@@ -302,18 +315,20 @@ export const DocumentSelectDialog: React.FC<DocumentSelectDialogProps> = ({
                             key={doc.id}
                             onClick={() => handleDocumentClick(doc.id)}
                             sx={{
-                              p: 1.75,
+                              p: 2,
                               borderRadius: '8px',
                               cursor: 'pointer',
                               transition: 'all 0.18s ease-in-out',
-                              bgcolor: isSelected ? '#f0f9ff' : '#f8fafc',
-                              border: isSelected ? '2px solid #0284c7' : '1px solid #e2e8f0',
-                              boxShadow: isSelected ? '0 4px 12px rgba(2, 132, 199, 0.15)' : 'none',
+                              bgcolor: isSelected ? '#f0f9ff' : '#ffffff',
+                              border: isSelected ? '1.5px solid #0284c7' : '1px solid #cbd5e1',
+                              boxShadow: isSelected
+                                ? '0 4px 12px rgba(2, 132, 199, 0.12)'
+                                : '0 1px 3px rgba(0, 0, 0, 0.04)',
+                              position: 'relative',
                               '&:hover': {
-                                bgcolor: isSelected ? '#e0f2fe' : '#f1f5f9',
+                                bgcolor: isSelected ? '#e0f2fe' : '#f8fafc',
                                 borderColor: isSelected ? '#0284c7' : '#94a3b8',
-                                transform: 'translateY(-1px)',
-                                boxShadow: '0 4px 8px rgba(0,0,0,0.06)'
+                                boxShadow: '0 4px 10px rgba(0, 0, 0, 0.06)'
                               }
                             }}
                           >
@@ -492,13 +507,13 @@ export const DocumentSelectMenu: React.FC<DocumentSelectMenuProps> = ({
             noWrap
             sx={{
               fontWeight: 700,
-              color: '#0f172a',
+              color: currentDoc ? '#0f172a' : '#64748b',
               fontSize: '0.95rem',
               lineHeight: 1.3,
               maxWidth: { xs: 260, sm: 360, md: 460 }
             }}
           >
-            {currentDoc?.title || selectedId}
+            {currentDoc ? currentDoc.title : (selectedId || 'Selectează un formular...')}
           </Typography>
           {currentDoc?.legalBase && (
             <Typography

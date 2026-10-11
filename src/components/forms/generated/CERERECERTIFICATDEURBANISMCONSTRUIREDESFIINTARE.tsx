@@ -6,6 +6,7 @@ import '../../../assets/form.css';
 import { CustomTextField as TextField, CustomDatePicker as DatePicker } from '../../inputs';
 import { rawHtml } from './CERERECERTIFICATDEURBANISMCONSTRUIREDESFIINTAREHtml';
 import stemaRo from '../../../assets/stema_ro.webp';
+import { useFormCustomization } from '../../../contexts/FormCustomizationContext';
 import UATAutocomplete from '../UATAutocomplete';
 
 // Helper to generate a safe name for react-hook-form
@@ -13,8 +14,24 @@ function generateFieldName(text: string) {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '').substring(0, 30);
 }
 
+function getTableText(node: any): string {
+  let p = node.parent;
+  while (p && p.tagName !== 'table') {
+    p = p.parent;
+  }
+  if (!p) return '';
+  let txt = '';
+  const walk = (n: any) => {
+    if (n.type === 'text') txt += n.data;
+    if (n.children) n.children.forEach(walk);
+  };
+  walk(p);
+  return txt;
+}
+
 export default function CERERECERTIFICATDEURBANISMCONSTRUIREDESFIINTARE() {
   const { register, setValue } = useFormContext();
+  const { stemaUrl } = useFormCustomization();
 
   const options: HTMLReactParserOptions = {
     replace: (domNode) => {
@@ -40,7 +57,7 @@ export default function CERERECERTIFICATDEURBANISMCONSTRUIREDESFIINTARE() {
           return (
             <td {...attributesToProps(domNode.attribs)}>
               <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '16px', minWidth: '135px' }}>
-                <img src={stemaRo} alt="Stema Romaniei" style={{ height: '165px', width: 'auto' }} />
+                <img src={stemaUrl || stemaRo} alt="Stemă" style={{ height: '165px', width: 'auto', maxHeight: '165px', objectFit: 'contain' }} />
               </div>
             </td>
           );
@@ -80,21 +97,32 @@ export default function CERERECERTIFICATDEURBANISMCONSTRUIREDESFIINTARE() {
 
         // Inject input after the label
         // We render the original children, then append the input
-        const fieldName = generateFieldName(trimmed) || 'field_' + Math.random().toString(36).substr(2, 5);
+        const baseFieldName = generateFieldName(trimmed) || 'field_' + Math.random().toString(36).substr(2, 5);
+        const tableText = getTableText(domNode);
+        const isSolicitant = /SOLICITANT/i.test(tableText);
+        const fieldName = (isSolicitant && (baseFieldName === 'jude_ul' || baseFieldName === 'municipiul_ora_ul_comuna'))
+          ? (baseFieldName === 'jude_ul' ? 'solicitant_jude_ul' : 'solicitant_localitate')
+          : baseFieldName;
 
         // Only add input if the text is short enough to be a label (not a massive paragraph)
         if (trimmed.length < 100) {
-          if (fieldName === 'jude_ul') {
+          if (baseFieldName === 'jude_ul') {
             return (
               <td {...attributesToProps(domNode.attribs)}>
                 <div className="td-flex-wrapper">
                   <div>{domToReact(domNode.children as any, options)}</div>
-                  <UATAutocomplete name={fieldName} label="" type="judet" style={{ marginTop: 'auto' }} />
+                  <UATAutocomplete
+                    name={fieldName}
+                    label=""
+                    type="judet"
+                    freeSolo={isSolicitant}
+                    style={{ marginTop: 'auto' }}
+                  />
                 </div>
               </td>
             );
           }
-          if (fieldName === 'localitatea_uat' || fieldName === 'municipiul_ora_ul_comuna') {
+          if (baseFieldName === 'localitatea_uat' || baseFieldName === 'municipiul_ora_ul_comuna') {
             return (
               <td {...attributesToProps(domNode.attribs)}>
                 <div className="td-flex-wrapper">
@@ -103,7 +131,8 @@ export default function CERERECERTIFICATDEURBANISMCONSTRUIREDESFIINTARE() {
                     name={fieldName}
                     label=""
                     type="localitate"
-                    linkedJudetName="jude_ul"
+                    freeSolo={isSolicitant}
+                    linkedJudetName={isSolicitant ? 'solicitant_jude_ul' : 'jude_ul'}
                     onSelectUAT={(uat: any) => {
                       if (fieldName === 'localitatea_uat') {
                         setValue('cod_de_identificare_fiscal_cif', uat.cui || '', { shouldValidate: true, shouldDirty: true });
