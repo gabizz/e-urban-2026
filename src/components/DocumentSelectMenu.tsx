@@ -14,7 +14,8 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  Stack
+  Stack,
+  Grid
 } from '@mui/material';
 import {
   RotateCcw,
@@ -33,40 +34,32 @@ import {
   type DocumentInfo
 } from '../data/documentTypes';
 
-interface DocumentSelectMenuProps {
-  selectedId: string;
+export interface DocumentSelectDialogProps {
+  open: boolean;
+  onClose: () => void;
+  selectedId?: string;
   onSelect: (docId: string) => void;
 }
 
-export const DocumentSelectMenu: React.FC<DocumentSelectMenuProps> = ({
+export const DocumentSelectDialog: React.FC<DocumentSelectDialogProps> = ({
+  open,
+  onClose,
   selectedId,
   onSelect
 }) => {
-  const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-
-  const currentDoc = getDocumentById(selectedId);
+  const currentDoc = selectedId ? getDocumentById(selectedId) : undefined;
 
   // Manage expanded accordions (default open the category of currently selected document)
   const [expanded, setExpanded] = useState<Record<string, boolean>>(() => ({
-    etapa1: false,
-    etapa2: true,
-    simplificata: false,
-    etapa3: false
+    etapa1: currentDoc?.categoryId === 'etapa1',
+    etapa2: !currentDoc?.categoryId || currentDoc?.categoryId === 'etapa2',
+    simplificata: currentDoc?.categoryId === 'simplificata',
+    etapa3: currentDoc?.categoryId === 'etapa3'
   }));
 
-  const handleOpen = () => {
-    setOpen(true);
-    if (currentDoc?.categoryId) {
-      setExpanded(prev => ({
-        ...prev,
-        [currentDoc.categoryId]: true
-      }));
-    }
-  };
-
   const handleClose = () => {
-    setOpen(false);
+    onClose();
     setSearchQuery('');
   };
 
@@ -102,98 +95,26 @@ export const DocumentSelectMenu: React.FC<DocumentSelectMenuProps> = ({
   }, [searchQuery]);
 
   return (
-    <>
-      {/* ========================================================================= */}
-      {/* TRIGGER BUTTON (Emulates & enhances standard select)                     */}
-      {/* ========================================================================= */}
-      <Button
-        variant="outlined"
-        onClick={handleOpen}
-        endIcon={
-          <RotateCcw
-            size={18}
-            style={{
-              color: open ? '#2563eb' : '#64748b',
-              transform: open ? 'rotate(-180deg)' : 'rotate(0deg)',
-              transition: 'transform 0.3s ease, color 0.2s ease'
-            }}
-          />
-        }
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          textAlign: 'left',
-          py: 0.75,
-          px: 2,
-          minWidth: { xs: 280, sm: 380, md: 440 },
-          maxWidth: { xs: '100%', md: 540 },
-          borderColor: open ? '#2563eb' : '#cbd5e1',
-          bgcolor: open ? '#f0f7ff' : '#f8fafc',
-          color: '#1e293b',
-          borderRadius: '8px',
-          boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
-          '&:hover': {
-            bgcolor: '#f1f5f9',
-            borderColor: '#3b82f6'
-          },
-          textTransform: 'none'
-        }}
-      >
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', mr: 2, overflow: 'hidden' }}>
-          <Typography
-            variant="subtitle2"
-            noWrap
-            sx={{
-              fontWeight: 700,
-              color: '#0f172a',
-              fontSize: '0.95rem',
-              lineHeight: 1.3,
-              maxWidth: { xs: 260, sm: 360, md: 460 }
-            }}
-          >
-            {currentDoc?.title || selectedId}
-          </Typography>
-          {currentDoc?.legalBase && (
-            <Typography
-              variant="caption"
-              noWrap
-              sx={{
-                color: '#2563eb',
-                fontWeight: 600,
-                fontSize: '0.78rem',
-                lineHeight: 1.2,
-                mt: 0.35,
-                maxWidth: { xs: 260, sm: 360, md: 460 }
-              }}
-            >
-              {currentDoc.legalBase}
-            </Typography>
-          )}
-        </Box>
-      </Button>
-
-      {/* ========================================================================= */}
-      {/* DIALOG (Modal with fixed DialogTitle, scrollable DialogContent, Actions)  */}
-      {/* ========================================================================= */}
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        maxWidth="lg"
-        fullWidth
-        scroll="paper"
-        slotProps={{
-          paper: {
-            sx: {
-              borderRadius: '16px',
-              bgcolor: '#f8fafc',
-              maxHeight: '88vh',
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-              border: '1px solid #e2e8f0'
-            }
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      maxWidth="lg"
+      fullWidth
+      scroll="paper"
+      slotProps={{
+        paper: {
+          sx: {
+            borderRadius: { xs: 0, sm: '16px' },
+            m: { xs: 0, sm: 2 },
+            maxHeight: { xs: '100%', sm: '88vh' },
+            height: { xs: '100%', sm: 'auto' },
+            bgcolor: '#f8fafc',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+            border: '1px solid #e2e8f0'
           }
-        }}
-      >
+        }
+      }}
+    >
         {/* ======================================================================= */}
         {/* HEADER: DialogTitle (Fixed at the top, does NOT scroll with content)     */}
         {/* ======================================================================= */}
@@ -396,37 +317,49 @@ export const DocumentSelectMenu: React.FC<DocumentSelectMenuProps> = ({
                               }
                             }}
                           >
-                            {/* Document Header Row */}
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 0.75, gap: 1 }}>
-                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                {isSelected && <CheckCircle2 size={18} color="#0284c7" />}
-                                <Typography
-                                  variant="subtitle2"
+                            {/* Document Header Row with size={{ xs: 12 }} */}
+                            <Grid container spacing={1} sx={{ alignItems: 'flex-start', mb: 1 }}>
+                              <Grid size={{ xs: 12, md: 8 }}>
+                                <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
+                                  {isSelected && <CheckCircle2 size={18} color="#0284c7" style={{ marginTop: 2, flexShrink: 0 }} />}
+                                  <Typography
+                                    variant="subtitle2"
+                                    sx={{
+                                      fontWeight: 700,
+                                      fontSize: '0.92rem',
+                                      color: 'primary.main',
+                                      textTransform: 'uppercase',
+                                      lineHeight: 1.35
+                                    }}
+                                  >
+                                    {doc.title}
+                                  </Typography>
+                                </Box>
+                              </Grid>
+                              <Grid size={{ xs: 12, md: 4 }} sx={{ display: 'flex', justifyContent: { xs: 'flex-start', md: 'flex-end' } }}>
+                                <Chip
+                                  size="small"
+                                  icon={<Scale size={13} style={{ marginLeft: 6 }} />}
+                                  label={doc.legalBase}
+                                  variant="outlined"
                                   sx={{
-                                    fontWeight: 700,
-                                    fontSize: '0.92rem',
-                                    color: 'primary.main',
-                                    textTransform: 'uppercase'
+                                    fontSize: '0.7rem',
+                                    fontWeight: 600,
+                                    bgcolor: '#ffffff',
+                                    color: '#1e293b',
+                                    borderColor: isSelected ? '#bae6fd' : '#cbd5e1',
+                                    height: 'auto',
+                                    py: 0.5,
+                                    maxWidth: '100%',
+                                    '& .MuiChip-label': {
+                                      whiteSpace: 'normal',
+                                      lineHeight: 1.25,
+                                      py: 0.25
+                                    }
                                   }}
-                                >
-                                  {doc.title}
-                                </Typography>
-                              </Box>
-                              <Chip
-                                size="small"
-                                icon={<Scale size={13} style={{ marginLeft: 6 }} />}
-                                label={doc.legalBase}
-                                variant="outlined"
-                                sx={{
-                                  fontSize: '0.7rem',
-                                  fontWeight: 600,
-                                  bgcolor: '#ffffff',
-                                  color: '#1e293b',
-                                  borderColor: isSelected ? '#bae6fd' : '#cbd5e1',
-                                  height: 24
-                                }}
-                              />
-                            </Box>
+                                />
+                              </Grid>
+                            </Grid>
 
                             {/* Guidance text with question circle icon */}
                             <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center', mb: 1 }}>
@@ -500,6 +433,98 @@ export const DocumentSelectMenu: React.FC<DocumentSelectMenuProps> = ({
           </Button>
         </DialogActions>
       </Dialog>
+  );
+};
+
+export interface DocumentSelectMenuProps {
+  selectedId: string;
+  onSelect: (docId: string) => void;
+  defaultOpen?: boolean;
+}
+
+export const DocumentSelectMenu: React.FC<DocumentSelectMenuProps> = ({
+  selectedId,
+  onSelect,
+  defaultOpen = false
+}) => {
+  const [open, setOpen] = useState(defaultOpen);
+  const currentDoc = getDocumentById(selectedId);
+
+  return (
+    <>
+      <Button
+        variant="outlined"
+        onClick={() => setOpen(true)}
+        endIcon={
+          <RotateCcw
+            size={18}
+            style={{
+              color: open ? '#2563eb' : '#64748b',
+              transform: open ? 'rotate(-180deg)' : 'rotate(0deg)',
+              transition: 'transform 0.3s ease, color 0.2s ease'
+            }}
+          />
+        }
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          textAlign: 'left',
+          py: 0.75,
+          px: 2,
+          minWidth: { xs: 280, sm: 380, md: 440 },
+          maxWidth: { xs: '100%', md: 540 },
+          borderColor: open ? '#2563eb' : '#cbd5e1',
+          bgcolor: open ? '#f0f7ff' : '#f8fafc',
+          color: '#1e293b',
+          borderRadius: '8px',
+          boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+          '&:hover': {
+            bgcolor: '#f1f5f9',
+            borderColor: '#3b82f6'
+          },
+          textTransform: 'none'
+        }}
+      >
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', mr: 2, overflow: 'hidden' }}>
+          <Typography
+            variant="subtitle2"
+            noWrap
+            sx={{
+              fontWeight: 700,
+              color: '#0f172a',
+              fontSize: '0.95rem',
+              lineHeight: 1.3,
+              maxWidth: { xs: 260, sm: 360, md: 460 }
+            }}
+          >
+            {currentDoc?.title || selectedId}
+          </Typography>
+          {currentDoc?.legalBase && (
+            <Typography
+              variant="caption"
+              noWrap
+              sx={{
+                color: '#2563eb',
+                fontWeight: 600,
+                fontSize: '0.78rem',
+                lineHeight: 1.2,
+                mt: 0.35,
+                maxWidth: { xs: 260, sm: 360, md: 460 }
+              }}
+            >
+              {currentDoc.legalBase}
+            </Typography>
+          )}
+        </Box>
+      </Button>
+
+      <DocumentSelectDialog
+        open={open}
+        onClose={() => setOpen(false)}
+        selectedId={selectedId}
+        onSelect={onSelect}
+      />
     </>
   );
 };

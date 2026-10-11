@@ -29,7 +29,15 @@ const formMap: Record<string, React.FC> = {
   'SOLICITAREUATRECEPTIE': Forms.SOLICITAREUATRECEPTIE
 };
 
-export function PrintButton({ data, size = "small" }: { data: any, size?: "small" | "medium" | "large" }) {
+export function PrintButton({
+  data,
+  size = "small",
+  sx
+}: {
+  data: any;
+  size?: "small" | "medium" | "large";
+  sx?: any;
+}) {
   const printRef = useRef(null);
   
   const handlePrint = useReactToPrint({
@@ -45,8 +53,14 @@ export function PrintButton({ data, size = "small" }: { data: any, size?: "small
 
   return (
     <>
-      <Button size={size} variant="outlined" startIcon={<Printer size={16} />} onClick={() => handlePrint()}>
-        Print / PDF
+      <Button
+        size={size}
+        variant="outlined"
+        startIcon={<Printer size={16} />}
+        onClick={() => handlePrint()}
+        sx={{ whiteSpace: 'nowrap', ...sx }}
+      >
+        Print
       </Button>
       
       <Box sx={{ display: 'none' }}>

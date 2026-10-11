@@ -116,47 +116,85 @@ function FormContainer({ initialData }: any) {
   const ActiveFormComponent = formMap[tipFormular] || Forms.CEREREAUTORIZATIEDECONSTRUIRE;
 
   return (
-    <Box sx={{ p: 4, height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h6">Completare formular</Typography>
+    <Box sx={{ p: { xs: 1.5, sm: 3, md: 4 }, minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: { xs: 'column', sm: 'row' },
+          justifyContent: 'space-between',
+          alignItems: { xs: 'stretch', sm: 'center' },
+          gap: 1.5,
+          mb: { xs: 2, sm: 3 },
+        }}
+      >
+        <Typography variant="h6" sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' }, fontWeight: 700 }}>
+          Completare formular
+        </Typography>
 
         {/* Hidden input to keep tip_formular bound to react-hook-form */}
         <input type="hidden" {...register('tip_formular')} />
 
         {/* Button that anchors the category cards menu */}
-        <DocumentSelectMenu
-          selectedId={tipFormular}
-          onSelect={(docId) => {
-            setValue('tip_formular', docId, { shouldDirty: true, shouldValidate: true });
-          }}
-        />
+        <Box sx={{ width: { xs: '100%', sm: 'auto' } }}>
+          <DocumentSelectMenu
+            selectedId={tipFormular}
+            defaultOpen={!initialData?.tip_formular}
+            onSelect={(docId) => {
+              setValue('tip_formular', docId, { shouldDirty: true, shouldValidate: true });
+            }}
+          />
+        </Box>
 
-        <Box sx={{ display: 'flex', gap: 2 }}>
-          <Button variant="outlined" startIcon={<Printer size={20} />} onClick={() => handlePrint()}>
+        <Box sx={{ display: 'flex', gap: 1.5, width: { xs: '100%', sm: 'auto' } }}>
+          <Button
+            variant="outlined"
+            startIcon={<Printer size={18} />}
+            onClick={() => handlePrint()}
+            sx={{ flex: { xs: 1, sm: 'initial' }, height: { xs: 40, sm: 'auto' } }}
+          >
             Print
           </Button>
-          <Button variant="contained" startIcon={<Save size={20} />} onClick={handleSubmit(onSubmit)}>
-            Salveaza
+          <Button
+            variant="contained"
+            startIcon={<Save size={18} />}
+            onClick={handleSubmit(onSubmit)}
+            sx={{ flex: { xs: 1, sm: 'initial' }, height: { xs: 40, sm: 'auto' }, fontWeight: 700 }}
+          >
+            Salvează
           </Button>
         </Box>
       </Box>
 
       <FormProvider {...methods}>
-        <Box sx={{ flexGrow: 1, overflowY: 'auto', display: 'flex', justifyContent: 'center' }}>
+        <Box
+          sx={{
+            flexGrow: 1,
+            overflowY: 'auto',
+            overflowX: 'auto',
+            display: 'flex',
+            justifyContent: 'center',
+            pb: 4,
+            WebkitOverflowScrolling: 'touch',
+          }}
+        >
 
           {/* Main Panel: Physical Form Replication */}
           <Box
             sx={{
-              maxWidth: '800px',
+              maxWidth: '850px',
               width: '100%',
-              border: '1px solid #ccc',
-              boxShadow: 3,
+              minWidth: { xs: '100%', sm: '650px' },
+              border: { xs: 'none', sm: '1px solid #ccc' },
+              borderRadius: { xs: 1, sm: 2 },
+              boxShadow: { xs: 0, sm: 3 },
               mb: 4,
+              backgroundColor: '#ffffff',
               '@media print': {
                 border: 'none !important',
                 boxShadow: 'none !important',
                 maxWidth: '100% !important',
                 width: '100% !important',
+                minWidth: '0 !important',
                 mb: '0 !important',
                 p: '0 !important',
               }
