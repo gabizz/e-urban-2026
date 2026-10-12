@@ -20,6 +20,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  CircularProgress,
 } from '@mui/material';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
@@ -29,7 +30,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { PrintButton } from '../components/PrintablePhysicalForm';
 import { DocumentSelectDialog } from '../components/DocumentSelectMenu';
 import { getDocumentById } from '../data/documentTypes';
-import eUrbanSvg from '../assets/e-urban.svg';
+import eUrbanSvg from '../assets/e-urban.png';
 
 // Helper to format any unmapped camelCase / snake_case / uppercase spaceless identifiers
 function formatFallbackDocName(rawId: string): string {
@@ -46,10 +47,21 @@ export default function Home() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [forms, setForms] = useState<FormSubmission[]>([]);
+  const [loading, setLoading] = useState(true);
   const [formToDelete, setFormToDelete] = useState<string | null>(null);
   const [selectDocOpen, setSelectDocOpen] = useState(false);
 
-  const loadForms = () => getForms().then(setForms);
+  const loadForms = async () => {
+    try {
+      const items = await getForms();
+      setForms(Array.isArray(items) ? items : []);
+    } catch (err) {
+      console.error('Failed to load forms from storage:', err);
+      setForms([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSelectDoc = (docId: string) => {
     setSelectDocOpen(false);
@@ -129,8 +141,8 @@ export default function Home() {
           }}
         >
           <Box>
-            <Typography variant="h4" component="h1" sx={{ fontWeight: 700, fontSize: { xs: '1.5rem', sm: '2.125rem' } }}>
-              Cererile Mele (Legea 169/2026)
+            <Typography variant="h5" component="h1" sx={{ fontWeight: 700, fontSize: { xs: '1.2rem', sm: '1.5rem' } }}>
+              Cererile mele (Legea 169/2026)
             </Typography>
             <Typography variant="body1" color="textSecondary" sx={{ mt: 0.5, fontSize: { xs: '0.875rem', sm: '1rem' } }}>
               Platformă digitală pentru generare și gestiune formulare oficiale de urbanism
@@ -150,7 +162,28 @@ export default function Home() {
           </Button>
         </Box>
 
-        {forms.length === 0 ? (
+        {loading ? (
+          <Paper
+            elevation={1}
+            sx={{
+              p: { xs: 4, sm: 8 },
+              textAlign: 'center',
+              borderRadius: 3,
+              backgroundColor: '#ffffff',
+              border: '1px solid #e2e8f0',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 2,
+            }}
+          >
+            <CircularProgress size={36} thickness={4} />
+            <Typography variant="body2" color="textSecondary">
+              Se încarcă cererile salvate...
+            </Typography>
+          </Paper>
+        ) : forms.length === 0 ? (
           <Paper
             elevation={2}
             sx={{
@@ -181,8 +214,9 @@ export default function Home() {
             {/* MOBILE XS CARD VIEW */}
             <Box sx={{ display: { xs: 'flex', sm: 'none' }, flexDirection: 'column', gap: 2 }}>
               {forms.map(form => {
-                const docInfo = getDocumentById(form.data.tip_formular);
-                const displayTitle = docInfo?.title || formatFallbackDocName(form.data.tip_formular);
+                const tip = form?.data?.tip_formular || '';
+                const docInfo = tip ? getDocumentById(tip) : undefined;
+                const displayTitle = docInfo?.title || formatFallbackDocName(tip);
                 const stage = docInfo?.categoryTitle || 'Formular Urbanism';
 
                 return (
@@ -297,8 +331,9 @@ export default function Home() {
                 </TableHead>
                 <TableBody>
                   {forms.map(form => {
-                    const docInfo = getDocumentById(form.data.tip_formular);
-                    const displayTitle = docInfo?.title || formatFallbackDocName(form.data.tip_formular);
+                    const tip = form?.data?.tip_formular || '';
+                    const docInfo = tip ? getDocumentById(tip) : undefined;
+                    const displayTitle = docInfo?.title || formatFallbackDocName(tip);
                     const stage = docInfo?.categoryTitle || 'Formular Urbanism';
 
                     return (

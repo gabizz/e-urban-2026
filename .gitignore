@@ -56,3 +56,9 @@ Thumbs.db
 coverage/
 *.lcov
 .nyc_output/
+
+# Design working files
+*.afdesign
+*.afdesign~lock~
+*.afphoto
+*.afphoto~lock~
