@@ -30,7 +30,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { PrintButton } from '../components/PrintablePhysicalForm';
 import { DocumentSelectDialog } from '../components/DocumentSelectMenu';
 import { getDocumentById } from '../data/documentTypes';
-import eUrbanSvg from '../assets/e-urban.png';
+import eUrbanImg from '../assets/e-urban.jpg';
 
 // Helper to format any unmapped camelCase / snake_case / uppercase spaceless identifiers
 function formatFallbackDocName(rawId: string): string {
@@ -119,7 +119,7 @@ export default function Home() {
           maxWidth: '1126px', // bounded strictly to container width
           height: { xs: '30vh', sm: '38vh', md: '44vh' },
           maxHeight: '415px',
-          backgroundImage: `url(${eUrbanSvg})`,
+          backgroundImage: `url(${eUrbanImg})`,
           backgroundPosition: 'center bottom',
           backgroundRepeat: 'no-repeat',
           backgroundSize: 'contain',
@@ -169,8 +169,11 @@ export default function Home() {
               p: { xs: 4, sm: 8 },
               textAlign: 'center',
               borderRadius: 3,
-              backgroundColor: '#ffffff',
-              border: '1px solid #e2e8f0',
+              backgroundColor: 'rgba(255, 255, 255, 0.82)',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)',
+              border: '1px solid rgba(226, 232, 240, 0.85)',
+              boxShadow: '0 8px 24px -4px rgba(15, 23, 42, 0.08)',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -191,7 +194,10 @@ export default function Home() {
               textAlign: 'center',
               borderRadius: 3,
               border: '1px dashed #cbd5e1',
-              backgroundColor: '#ffffff',
+              backgroundColor: 'rgba(255, 255, 255, 0.82)',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)',
+              boxShadow: '0 8px 24px -4px rgba(15, 23, 42, 0.08)',
             }}
           >
             <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, fontSize: { xs: '1.1rem', sm: '1.25rem' } }}>
@@ -226,8 +232,11 @@ export default function Home() {
                     sx={{
                       p: 2,
                       borderRadius: 2.5,
-                      border: '1px solid #e2e8f0',
-                      backgroundColor: '#ffffff',
+                      border: '1px solid rgba(226, 232, 240, 0.85)',
+                      backgroundColor: 'rgba(255, 255, 255, 0.82)',
+                      backdropFilter: 'blur(8px)',
+                      WebkitBackdropFilter: 'blur(8px)',
+                      boxShadow: '0 4px 16px -2px rgba(15, 23, 42, 0.08)',
                       display: 'flex',
                       flexDirection: 'column',
                       gap: 1.5,
@@ -317,12 +326,15 @@ export default function Home() {
                 display: { xs: 'none', sm: 'block' },
                 borderRadius: 3,
                 overflow: 'hidden',
-                border: '1px solid #e2e8f0',
-                backgroundColor: '#ffffff',
+                border: '1px solid rgba(226, 232, 240, 0.85)',
+                backgroundColor: 'rgba(255, 255, 255, 0.82)',
+                backdropFilter: 'blur(8px)',
+                WebkitBackdropFilter: 'blur(8px)',
+                boxShadow: '0 8px 24px -4px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04)',
               }}
             >
               <Table sx={{ minWidth: 650 }} aria-label="tabel cereri urbanism">
-                <TableHead sx={{ backgroundColor: '#f8fafc', borderBottom: '2px solid #e2e8f0' }}>
+                <TableHead sx={{ backgroundColor: 'rgba(248, 250, 252, 0.82)', borderBottom: '2px solid rgba(226, 232, 240, 0.85)' }}>
                   <TableRow>
                     <TableCell sx={{ fontWeight: 700, color: '#334155', py: 2 }}>Tip Formular</TableCell>
                     <TableCell sx={{ fontWeight: 700, color: '#334155', py: 2, width: 180 }}>Data</TableCell>
@@ -342,7 +354,7 @@ export default function Home() {
                         hover
                         sx={{
                           transition: 'background-color 0.15s ease',
-                          '&:hover': { backgroundColor: '#f1f5f9' },
+                          '&:hover': { backgroundColor: 'rgba(241, 245, 249, 0.7)' },
                           '&:last-child td, &:last-child th': { border: 0 },
                         }}
                       >
