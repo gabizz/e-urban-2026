@@ -104,17 +104,6 @@ export const DOCUMENT_CATEGORIES: DocumentCategory[] = [
         tags: ['autorizatie', 'dtac', 'dtad', 'proiect', 'construire']
       },
       {
-        id: 'ANEXAAUTORIZATIEDECONSTRUIRE',
-        title: 'Anexa Tehnică la Autorizația de Construire',
-        shortTitle: 'Anexa Tehnică la AC',
-        categoryId: 'etapa2',
-        categoryTitle: 'Etapa 2: Autorizare Construire / Desființare',
-        legalBase: 'Art. 262 alin. (1) lit. d) din Legea nr. 169/2026',
-        purpose: 'Se completează de proiectantul documentației și sintetizează datele tehnice ale investiției: categorii lucrări, POT/CUT, fișa clădirii, suprafețe, volum, utilități și siguranță la incendiu.',
-        legalQuote: '„Anexa tehnică sintetică elaborată de proiectantul autorizat ce detaliază parametrii tehnici, funcționali și structurali ai obiectivului de investiții.”',
-        tags: ['anexa', 'tehnica', 'proiectant', 'pot', 'cut', 'suprafete', 'fisa cladirii']
-      },
-      {
         id: 'CEREREPRELUNGIREAUTORIZATIEDECONSTRUIRE',
         title: 'Prelungire Autorizație de Construire',
         shortTitle: 'Prelungire AC',
@@ -168,6 +157,28 @@ export const DOCUMENT_CATEGORIES: DocumentCategory[] = [
         purpose: 'Se anexează la dosarul autorizației de construire atunci când se invocă aprobarea tacită a avizelor sau acordurilor care nu au fost emise de către avizatori în termenul legal.',
         legalQuote: '„Atestă pe proprie răspundere, sub sancțiunea legii penale, depășirea termenului legal de emitere a avizului fără comunicarea de refuz sau cereri de completare.”',
         tags: ['acord tacit', 'declaratie', 'aviz', 'termen depasit']
+      },
+      {
+        id: 'INSTIINTAREINCEPEREISC',
+        title: 'Înștiințare începere execuție lucrări (ISC)',
+        shortTitle: 'Înștiințare începere ISC',
+        categoryId: 'etapa2',
+        categoryTitle: 'Etapa 2: Autorizare Construire / Desființare',
+        legalBase: 'Legea nr. 169/2026',
+        purpose: 'Se depune la Inspectoratul de Stat în Construcții (ISC) pentru comunicarea datei de începere a execuției lucrărilor autorizate.',
+        legalQuote: '„Beneficiarul are obligația de a înștiința Inspectoratul de Stat în Construcții cu privire la data începerii lucrărilor de construcții autorizate.”',
+        tags: ['isc', 'instiintare', 'incepere', 'executie', 'inspectorat']
+      },
+      {
+        id: 'INSTIINTAREINCHEIEREISC',
+        title: 'Înștiințare încheiere execuție lucrări (ISC)',
+        shortTitle: 'Înștiințare încheiere ISC',
+        categoryId: 'etapa2',
+        categoryTitle: 'Etapa 2: Autorizare Construire / Desființare',
+        legalBase: 'Legea nr. 169/2026',
+        purpose: 'Se depune la Inspectoratul de Stat în Construcții (ISC) pentru comunicarea finalizării execuției lucrărilor autorizate.',
+        legalQuote: '„Beneficiarul are obligația de a înștiința Inspectoratul de Stat în Construcții cu privire la finalizarea lucrărilor de construcții autorizate.”',
+        tags: ['isc', 'instiintare', 'incheiere', 'finalizare', 'receptie', 'inspectorat']
       }
     ]
   },
