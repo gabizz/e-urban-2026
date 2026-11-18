@@ -40,7 +40,8 @@ export const formMap: Record<string, React.FC> = {
   'INSTIINTAREINCHEIEREISC': Forms.INSTIINTAREINCHEIEREISC,
   'INSTIINTAREPRIVINDINCHEIEREAEXECUTIEILUCRARILOR': Forms.INSTIINTAREPRIVINDINCHEIEREAEXECUTIEILUCRARILOR,
   'NOTIFICAREPROCEDURASIMPLIFICATA': Forms.NOTIFICAREPROCEDURASIMPLIFICATA,
-  'SOLICITAREUATRECEPTIE': Forms.SOLICITAREUATRECEPTIE
+  'SOLICITAREUATRECEPTIE': Forms.SOLICITAREUATRECEPTIE,
+  'INSTIINTAREFINALIZARELUCRARINOTIFICATE': Forms.INSTIINTAREFINALIZARELUCRARINOTIFICATE
 };
 
 export default function FormPage() {
@@ -79,6 +80,7 @@ function FormContainer({ initialData }: any) {
   const methods = useForm({
     defaultValues: {
       tip_formular: initialData?.tip_formular || '',
+      data: new Date().toLocaleDateString('ro-RO'),
       solicitant: {
         tip_persoana: 'FIZICA',
         nume_denumire: '',
@@ -94,6 +96,22 @@ function FormContainer({ initialData }: any) {
   const { handleSubmit, watch, register, setValue } = methods;
   const tipFormular = watch('tip_formular');
   const { uatDetails } = useFormCustomization();
+
+  const headerJudet = watch('jude_ul');
+  const headerLocalitate = watch('autoritatea_administra_iei_pub') || watch('localitatea_uat');
+
+  useEffect(() => {
+    if (headerJudet) {
+      setValue('jude_', headerJudet, { shouldDirty: true });
+    }
+  }, [headerJudet, setValue]);
+
+  useEffect(() => {
+    if (headerLocalitate) {
+      setValue('municipiu_ora_comun', headerLocalitate, { shouldDirty: true });
+      setValue('municipiul_ora_ul_comuna', headerLocalitate, { shouldDirty: true });
+    }
+  }, [headerLocalitate, setValue]);
 
   useEffect(() => {
     if (uatDetails) {
@@ -149,10 +167,38 @@ function FormContainer({ initialData }: any) {
 
   const ActiveFormComponent = tipFormular ? (formMap[tipFormular] || null) : null;
 
+  const handleFormClick = (e: React.MouseEvent<HTMLFormElement>) => {
+    const target = e.target as HTMLElement | null;
+    if (!target) return;
+
+    // Ignore clicks on interactive elements or inside a <label> (which already toggles its input natively)
+    if (target.closest('input, textarea, select, button, a, label')) {
+      return;
+    }
+
+    const container = target.closest('li, p, td, div, span');
+    if (!container) return;
+
+    const checkboxes = container.querySelectorAll<HTMLInputElement>('input[type="checkbox"]');
+    if (checkboxes.length === 1) {
+      checkboxes[0].click();
+    }
+  };
+
   return (
     <Box sx={{ p: { xs: 1.5, sm: 3, md: 4 }, minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Box
+        className="no-print"
         sx={{
+          position: 'sticky',
+          top: { xs: 56, sm: 64 },
+          zIndex: (theme) => theme.zIndex.appBar - 1,
+          backgroundColor: 'rgba(255, 255, 255, 0.95)',
+          backdropFilter: 'blur(8px)',
+          py: 1.5,
+          px: { xs: 1.5, sm: 2 },
+          borderRadius: 2,
+          boxShadow: '0 2px 8px rgba(15, 23, 42, 0.08)',
           display: 'flex',
           flexDirection: { xs: 'column', sm: 'row' },
           justifyContent: 'space-between',
@@ -235,7 +281,7 @@ function FormContainer({ initialData }: any) {
             }}
             ref={printRef}
           >
-            <form id="urbanism-form" onSubmit={handleSubmit(onSubmit)}>
+            <form id="urbanism-form" onSubmit={handleSubmit(onSubmit)} onClick={handleFormClick}>
               {ActiveFormComponent ? (
                 <ActiveFormComponent />
               ) : (

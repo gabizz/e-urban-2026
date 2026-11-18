@@ -6,6 +6,7 @@ import '../../../assets/form.css';
 import { CustomTextField as TextField, CustomDatePicker as DatePicker } from '../../inputs';
 import { rawHtml } from './ANEXAAUTORIZATIEDECONSTRUIREHtml'; 
 import UATAutocomplete from '../UATAutocomplete';
+import ImobilArrayTable from '../ImobilArrayTable';
 
 // Helper to generate a safe name for react-hook-form
 function generateFieldName(text: string) {
@@ -29,8 +30,69 @@ export default function ANEXAAUTORIZATIEDECONSTRUIRE() {
     setImobile(prev => prev.filter(id => id !== idToRemove));
   };
 
-  const options: HTMLReactParserOptions = {
+  const createOptions = (fieldPrefix = '', imobilIndex = 0): HTMLReactParserOptions => ({
     replace: (domNode) => {
+      if (domNode.type === 'text' && /(\.{3,}|…)/.test((domNode as any).data || '')) {
+        const text = (domNode as any).data as string;
+        const parts = text.split(/(\.{3,}|…)/g);
+        return (
+          <>
+            {parts.map((part, i) => {
+              if (/^(\.{3,}|…)$/.test(part)) {
+                const prev = parts[i - 1] || '';
+                const isDate = /din\s*$/i.test(prev);
+                const inlineName = `${fieldPrefix}inline_${generateFieldName(prev.slice(-24)) || i}_${i}`;
+                return (
+                  <input
+                    key={i}
+                    type="text"
+                    className="inline-input"
+                    placeholder={isDate ? 'zz.ll.aaaa' : ''}
+                    style={{
+                      width: isDate ? '105px' : '75px',
+                      border: 'none',
+                      borderBottom: '1px solid #64748b',
+                      background: 'rgba(241, 245, 249, 0.7)',
+                      padding: '1px 4px',
+                      margin: '0 3px',
+                      fontSize: 'inherit',
+                      fontFamily: 'inherit',
+                      borderRadius: '2px',
+                    }}
+                    {...register(inlineName)}
+                  />
+                );
+              }
+              return part;
+            })}
+          </>
+        );
+      }
+      if (fieldPrefix.startsWith('imobile.') && domNode.type === 'text' && /Imobil\s+1/i.test((domNode as any).data || '')) {
+        return <>{((domNode as any).data as string).replace(/Imobil\s+1/gi, `Imobil ${imobilIndex + 1}`)}</>;
+      }
+      if (!fieldPrefix && domNode instanceof Element && domNode.name === 'table') {
+        const firstRow = domNode.children?.find((c: any) => c.name === 'tr' || c.name === 'tbody');
+        const rowText = firstRow ? getTableText(firstRow).trim() : '';
+        if (/^(\d+\.\s*)?IMOBIL(UL|E|ELE)?\b/i.test(rowText)) {
+          const directChildren = (domNode.children || []) as any[];
+          const tbody = directChildren.find((c) => c.name === 'tbody');
+          const allRows = (tbody ? tbody.children : directChildren).filter((c: any) => c.name === 'tr');
+          const getRowText = (n: any): string => n?.data || (n?.children ? n.children.map(getRowText).join(' ') : '');
+          const imobil1Idx = allRows.findIndex((r: any) => /Imobil\s+1/i.test(getRowText(r)));
+          const noteIdx = allRows.findIndex((r: any) => /Pentru fiecare imobil/i.test(getRowText(r)));
+          const splitIdx = imobil1Idx >= 0 ? imobil1Idx : (noteIdx >= 0 ? noteIdx + 1 : 1);
+          const headerRows = allRows.slice(0, splitIdx);
+          const itemRows = allRows.slice(splitIdx);
+          return (
+            <ImobilArrayTable
+              tableAttribs={attributesToProps(domNode.attribs)}
+              headerRows={domToReact(headerRows as any, createOptions('imobile_header_'))}
+              renderItemRows={(prefix, idx) => domToReact(itemRows as any, createOptions(prefix, idx))}
+            />
+          );
+        }
+      }
       if (domNode instanceof Element && domNode.tagName === 'td') {
          // Get raw text content of the TD
          let textContent = '';
@@ -77,7 +139,7 @@ export default function ANEXAAUTORIZATIEDECONSTRUIRE() {
          if (hasCheckbox) {
            return (
              <td {...attributesToProps(domNode.attribs)}>
-               {domToReact(domNode.children as any, options)}
+               {domToReact(domNode.children as any, createOptions(fieldPrefix, imobilIndex))}
              </td>
            );
          }
@@ -91,7 +153,7 @@ export default function ANEXAAUTORIZATIEDECONSTRUIRE() {
              return (
                <td {...attributesToProps(domNode.attribs)}>
                  <div className="td-flex-wrapper">
-                   <div>{domToReact(domNode.children as any, options)}</div>
+                   <div>{domToReact(domNode.children as any, createOptions(fieldPrefix, imobilIndex))}</div>
                    <DatePicker 
                      variant="filled" 
                      size="small" 
@@ -108,7 +170,7 @@ export default function ANEXAAUTORIZATIEDECONSTRUIRE() {
            return (
              <td {...attributesToProps(domNode.attribs)}>
                <div className="td-flex-wrapper">
-                 <div>{domToReact(domNode.children as any, options)}</div>
+                 <div>{domToReact(domNode.children as any, createOptions(fieldPrefix, imobilIndex))}</div>
                  <TextField 
                    variant="filled" 
                    size="small" 
@@ -127,7 +189,8 @@ export default function ANEXAAUTORIZATIEDECONSTRUIRE() {
       }
       return undefined;
     }
-  };
+  });
+  const options = createOptions();
 
   return (
     <div className="physical-form-container">

@@ -28,9 +28,24 @@ export const saveForm = async (data: any): Promise<void> => {
   await localforage.setItem('submissions', forms);
 };
 
+const withTimeout = <T>(promise: Promise<T>, ms: number, fallback: T): Promise<T> =>
+  Promise.race([
+    promise,
+    new Promise<T>((resolve) => setTimeout(() => resolve(fallback), ms)),
+  ]);
+
 export const getForms = async (): Promise<FormSubmission[]> => {
-  const forms: FormSubmission[] | null = await localforage.getItem('submissions');
-  return forms || [];
+  try {
+    const forms: FormSubmission[] | null = await withTimeout(
+      localforage.getItem<FormSubmission[]>('submissions'),
+      2000,
+      null
+    );
+    return forms || [];
+  } catch (err) {
+    console.error('localforage getItem failed:', err);
+    return [];
+  }
 };
 
 export const getForm = async (id: string): Promise<FormSubmission | undefined> => {

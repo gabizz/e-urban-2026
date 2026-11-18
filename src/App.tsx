@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import { ThemeProvider, CssBaseline, AppBar, Toolbar, Typography, IconButton, Tooltip } from '@mui/material';
+import { ThemeProvider, CssBaseline, AppBar, Toolbar, Typography, IconButton, Tooltip, Box } from '@mui/material';
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import HelpRoundedIcon from '@mui/icons-material/HelpRounded';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -19,9 +19,11 @@ function App() {
         <BrowserRouter>
           <FormCustomizationProvider>
             <AppBar
-              position="static"
+              position="sticky"
               color="primary"
               sx={{
+                top: 0,
+                zIndex: (theme) => theme.zIndex.appBar,
                 borderRadius: { xs: 0, sm: '0 0 16px 16px' },
                 background: 'linear-gradient(180deg, #1976d2 0%, #0d47a1 55%, #0a3880 100%)',
                 boxShadow: `
@@ -32,7 +34,6 @@ function App() {
                   inset 0 -3px 4px rgba(0, 0, 0, 0.35)
                 `,
                 borderBottom: '3px solid #062656',
-                position: 'relative',
                 overflow: 'hidden',
                 '&::before': {
                   content: '""',
@@ -77,37 +78,53 @@ function App() {
                   </IconButton>
                 </Tooltip>
 
-                <Typography
-                  variant="h6"
-                  component="div"
-                  sx={{
-                    flexGrow: 1,
-                    fontWeight: 700,
-                    fontSize: { xs: '0.95rem', sm: '1.25rem' },
-                    lineHeight: 1.2,
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    pr: 1,
-                    textShadow: '0 2px 4px rgba(0, 0, 0, 0.4), 0 1px 0 rgba(255, 255, 255, 0.15)',
-                    letterSpacing: '0.015em',
-                  }}
-                >
-                  e-urban.ro
+                <Box sx={{ flexGrow: 1, minWidth: 0, pr: 1, py: 0.5 }}>
                   <Typography
-                    component="span"
+                    variant="h6"
+                    component="div"
                     sx={{
-                      display: { xs: 'none', sm: 'inline' },
-                      fontSize: 'inherit',
-                      fontWeight: 400,
-                      opacity: 0.9,
-                      ml: 1,
-                      textShadow: '0 1px 3px rgba(0, 0, 0, 0.4)',
+                      fontWeight: 700,
+                      fontSize: { xs: '0.875rem', sm: '1.05rem' },
+                      lineHeight: 1.2,
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      textShadow: '0 2px 4px rgba(0, 0, 0, 0.4), 0 1px 0 rgba(255, 255, 255, 0.15)',
+                      letterSpacing: '0.015em',
                     }}
                   >
-                    — utilitar formulare urbanism (Legea 169/2026)
+                    e-urban.ro
+                    <Typography
+                      component="span"
+                      sx={{
+                        display: { xs: 'none', sm: 'inline' },
+                        fontSize: 'inherit',
+                        fontWeight: 400,
+                        opacity: 0.9,
+                        ml: 1,
+                        textShadow: '0 1px 3px rgba(0, 0, 0, 0.4)',
+                      }}
+                    >
+                      — utilitar formulare urbanism (Legea 169/2026)
+                    </Typography>
                   </Typography>
-                </Typography>
+                  <Typography
+                    variant="caption"
+                    component="div"
+                    sx={{
+                      fontSize: { xs: '0.65rem', sm: '0.72rem' },
+                      lineHeight: 1.25,
+                      opacity: 0.85,
+                      mt: 0.25,
+                      whiteSpace: { xs: 'normal', md: 'nowrap' },
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      textShadow: '0 1px 2px rgba(0, 0, 0, 0.35)',
+                    }}
+                  >
+                    conform Legii nr. 169/2026 (Codul amenajării teritoriului, urbanismului și construcțiilor) și Ordinului nr. 975/2026
+                  </Typography>
+                </Box>
 
                 <Tooltip title="Manual de utilizare & Informații legale (GDPR)">
                   <IconButton

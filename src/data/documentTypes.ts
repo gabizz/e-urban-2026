@@ -203,6 +203,17 @@ export const DOCUMENT_CATEGORIES: DocumentCategory[] = [
         purpose: 'Se folosește pentru lucrări scutite de autorizație clasică: locuințe parter în rural intravilan sub 150 mp, anexe gospodărești sub 50 mp, împrejmuiri ușoare, reabilitare fațade (fără monumente).',
         legalQuote: '„Lucrările de construire care pot fi realizate în baza notificării prealabile transmise autorității administrației publice locale, fără a mai fi necesară obținerea unei autorizații de construire.”',
         tags: ['notificare', 'rural', 'anexe', 'imprejmuiri', 'simplificat', 'scutit de ac']
+      },
+      {
+        id: 'INSTIINTAREFINALIZARELUCRARINOTIFICATE',
+        title: 'Înștiințare Finalizare Lucrări Notificate & Recepție UAT',
+        shortTitle: 'Finalizare Lucrări Notificate',
+        categoryId: 'simplificata',
+        categoryTitle: 'Procedură Simplificată (Notificare)',
+        legalBase: 'Art. 294 – Art. 298 din Legea nr. 169/2026',
+        purpose: 'Se depune la finalizarea lucrărilor executate prin procedură simplificată (notificare prealabilă) pentru declararea datei începerii și finalizării lucrărilor și solicitarea participării reprezentantului UAT la recepție.',
+        legalQuote: '„Legea nr. 169/2026 privind Codul amenajării teritoriului, urbanismului și construcțiilor nu instituie o înștiințare distinctă privind începerea lucrărilor notificate; data începerii se declară în prezentul formular și se consemnează în procesul-verbal de recepție.”',
+        tags: ['notificare', 'finalizare', 'receptie', 'uat', 'simplificat', 'incepere']
       }
     ]
   },

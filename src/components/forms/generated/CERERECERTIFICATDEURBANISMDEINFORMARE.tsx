@@ -8,6 +8,7 @@ import { rawHtml } from './CERERECERTIFICATDEURBANISMDEINFORMAREHtml';
 import stemaRo from '../../../assets/stema_ro.webp';
 import { useFormCustomization } from '../../../contexts/FormCustomizationContext';
 import UATAutocomplete from '../UATAutocomplete';
+import ImobilArrayTable from '../ImobilArrayTable';
 
 // Helper to generate a safe name for react-hook-form
 function generateFieldName(text: string) {
@@ -31,10 +32,71 @@ function getTableText(node: any): string {
 
 export default function CERERECERTIFICATDEURBANISMDEINFORMARE() {
   const { register, setValue } = useFormContext();
-  const { stemaUrl } = useFormCustomization();
+  const { stemaUrl, openStemaDialog } = useFormCustomization();
 
-  const options: HTMLReactParserOptions = {
+  const createOptions = (fieldPrefix = '', imobilIndex = 0): HTMLReactParserOptions => ({
     replace: (domNode) => {
+      if (domNode.type === 'text' && /(\.{3,}|…)/.test((domNode as any).data || '')) {
+        const text = (domNode as any).data as string;
+        const parts = text.split(/(\.{3,}|…)/g);
+        return (
+          <>
+            {parts.map((part, i) => {
+              if (/^(\.{3,}|…)$/.test(part)) {
+                const prev = parts[i - 1] || '';
+                const isDate = /din\s*$/i.test(prev);
+                const inlineName = `${fieldPrefix}inline_${generateFieldName(prev.slice(-24)) || i}_${i}`;
+                return (
+                  <input
+                    key={i}
+                    type="text"
+                    className="inline-input"
+                    placeholder={isDate ? 'zz.ll.aaaa' : ''}
+                    style={{
+                      width: isDate ? '105px' : '75px',
+                      border: 'none',
+                      borderBottom: '1px solid #64748b',
+                      background: 'rgba(241, 245, 249, 0.7)',
+                      padding: '1px 4px',
+                      margin: '0 3px',
+                      fontSize: 'inherit',
+                      fontFamily: 'inherit',
+                      borderRadius: '2px',
+                    }}
+                    {...register(inlineName)}
+                  />
+                );
+              }
+              return part;
+            })}
+          </>
+        );
+      }
+      if (fieldPrefix.startsWith('imobile.') && domNode.type === 'text' && /Imobil\s+1/i.test((domNode as any).data || '')) {
+        return <>{((domNode as any).data as string).replace(/Imobil\s+1/gi, `Imobil ${imobilIndex + 1}`)}</>;
+      }
+      if (!fieldPrefix && domNode instanceof Element && domNode.name === 'table') {
+        const firstRow = domNode.children?.find((c: any) => c.name === 'tr' || c.name === 'tbody');
+        const rowText = firstRow ? getTableText(firstRow).trim() : '';
+        if (/^(\d+\.\s*)?IMOBIL(UL|E|ELE)?\b/i.test(rowText)) {
+          const directChildren = (domNode.children || []) as any[];
+          const tbody = directChildren.find((c) => c.name === 'tbody');
+          const allRows = (tbody ? tbody.children : directChildren).filter((c: any) => c.name === 'tr');
+          const getRowText = (n: any): string => n?.data || (n?.children ? n.children.map(getRowText).join(' ') : '');
+          const imobil1Idx = allRows.findIndex((r: any) => /Imobil\s+1/i.test(getRowText(r)));
+          const noteIdx = allRows.findIndex((r: any) => /Pentru fiecare imobil/i.test(getRowText(r)));
+          const splitIdx = imobil1Idx >= 0 ? imobil1Idx : (noteIdx >= 0 ? noteIdx + 1 : 1);
+          const headerRows = allRows.slice(0, splitIdx);
+          const itemRows = allRows.slice(splitIdx);
+          return (
+            <ImobilArrayTable
+              tableAttribs={attributesToProps(domNode.attribs)}
+              headerRows={domToReact(headerRows as any, createOptions('imobile_header_'))}
+              renderItemRows={(prefix, idx) => domToReact(itemRows as any, createOptions(prefix, idx))}
+            />
+          );
+        }
+      }
       if (domNode instanceof Element && domNode.tagName === 'td') {
         // Get raw text content of the TD
         let textContent = '';
@@ -53,11 +115,28 @@ export default function CERERECERTIFICATDEURBANISMDEINFORMARE() {
         };
         checkImage(domNode);
 
-        if (hasImage) {
+        if (hasImage || (domNode.attribs?.rowspan === '4' && !trimmed)) {
           return (
             <td {...attributesToProps(domNode.attribs)}>
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '16px', minWidth: '135px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '16px', minWidth: '135px' }}>
                 <img src={stemaUrl || stemaRo} alt="Stemă" style={{ height: '165px', width: 'auto', maxHeight: '165px', objectFit: 'contain' }} />
+                <button
+                  type="button"
+                  className="no-print"
+                  onClick={openStemaDialog}
+                  style={{
+                    marginTop: '8px',
+                    fontSize: '11px',
+                    padding: '3px 8px',
+                    cursor: 'pointer',
+                    background: '#f1f5f9',
+                    border: '1px solid #cbd5e1',
+                    borderRadius: '4px',
+                    color: '#334155',
+                  }}
+                >
+                  Adaugă URL stemă localitate
+                </button>
               </div>
             </td>
           );
@@ -90,7 +169,7 @@ export default function CERERECERTIFICATDEURBANISMDEINFORMARE() {
         if (hasCheckbox) {
           return (
             <td {...attributesToProps(domNode.attribs)}>
-              {domToReact(domNode.children as any, options)}
+              {domToReact(domNode.children as any, createOptions(fieldPrefix, imobilIndex))}
             </td>
           );
         }
@@ -100,17 +179,18 @@ export default function CERERECERTIFICATDEURBANISMDEINFORMARE() {
         const baseFieldName = generateFieldName(trimmed) || 'field_' + Math.random().toString(36).substr(2, 5);
         const tableText = getTableText(domNode);
         const isSolicitant = /SOLICITANT/i.test(tableText);
-        const fieldName = (isSolicitant && (baseFieldName === 'jude_ul' || baseFieldName === 'municipiul_ora_ul_comuna'))
+        const rawFieldName = (isSolicitant && (baseFieldName === 'jude_ul' || baseFieldName === 'municipiul_ora_ul_comuna'))
           ? (baseFieldName === 'jude_ul' ? 'solicitant_jude_ul' : 'solicitant_localitate')
           : baseFieldName;
+        const fieldName = fieldPrefix ? `${fieldPrefix}${rawFieldName}` : rawFieldName;
 
         // Only add input if the text is short enough to be a label (not a massive paragraph)
         if (trimmed.length < 100) {
-          if (baseFieldName === 'jude_ul') {
+          if (baseFieldName === 'jude_ul' || baseFieldName === 'jude_') {
             return (
               <td {...attributesToProps(domNode.attribs)}>
                 <div className="td-flex-wrapper">
-                  <div>{domToReact(domNode.children as any, options)}</div>
+                  <div>{domToReact(domNode.children as any, createOptions(fieldPrefix, imobilIndex))}</div>
                   <UATAutocomplete
                     name={fieldName}
                     label=""
@@ -122,19 +202,19 @@ export default function CERERECERTIFICATDEURBANISMDEINFORMARE() {
               </td>
             );
           }
-          if (baseFieldName === 'localitatea_uat' || baseFieldName === 'municipiul_ora_ul_comuna') {
+          if (baseFieldName === 'localitatea_uat' || baseFieldName === 'municipiul_ora_ul_comuna' || baseFieldName === 'municipiu_ora_comun' || baseFieldName === 'autoritatea_administra_iei_pub') {
             return (
               <td {...attributesToProps(domNode.attribs)}>
                 <div className="td-flex-wrapper">
-                  <div>{domToReact(domNode.children as any, options)}</div>
+                  <div>{domToReact(domNode.children as any, createOptions(fieldPrefix, imobilIndex))}</div>
                   <UATAutocomplete
                     name={fieldName}
                     label=""
                     type="localitate"
                     freeSolo={isSolicitant}
-                    linkedJudetName={isSolicitant ? 'solicitant_jude_ul' : 'jude_ul'}
+                    linkedJudetName={fieldPrefix ? `${fieldPrefix}jude_` : (isSolicitant ? 'solicitant_jude_ul' : (baseFieldName === 'municipiu_ora_comun' ? 'jude_' : 'jude_ul'))}
                     onSelectUAT={(uat: any) => {
-                      if (fieldName === 'localitatea_uat') {
+                      if (fieldName === 'localitatea_uat' || fieldName === 'autoritatea_administra_iei_pub') {
                         setValue('cod_de_identificare_fiscal_cif', uat.cui || '', { shouldValidate: true, shouldDirty: true });
                         const email = uat['E-mail general'] || uat['E-mail registratura'] || '';
                         const address = uat.Adresa || '';
@@ -157,6 +237,7 @@ export default function CERERECERTIFICATDEURBANISMDEINFORMARE() {
                         setValue('institu_iaprim_ria_municipiulu', institutionName, { shouldValidate: true, shouldDirty: true });
                         setValue('institu_ia', institutionName, { shouldValidate: true, shouldDirty: true });
                         setValue('institu_ia_entitatea_de_la_car', institutionName, { shouldValidate: true, shouldDirty: true });
+                        setValue('c_tre_primarul', institutionName.replace(/^Primăria /, ''), { shouldValidate: true, shouldDirty: true });
                       }
                     }}
                     style={{ marginTop: 'auto' }} />
@@ -169,7 +250,7 @@ export default function CERERECERTIFICATDEURBANISMDEINFORMARE() {
             return (
               <td {...attributesToProps(domNode.attribs)}>
                 <div className="td-flex-wrapper">
-                  <div>{domToReact(domNode.children as any, options)}</div>
+                  <div>{domToReact(domNode.children as any, createOptions(fieldPrefix, imobilIndex))}</div>
                   <DatePicker
                     variant="filled"
                     size="small"
@@ -186,7 +267,7 @@ export default function CERERECERTIFICATDEURBANISMDEINFORMARE() {
           return (
             <td {...attributesToProps(domNode.attribs)}>
               <div className="td-flex-wrapper">
-                <div>{domToReact(domNode.children as any, options)}</div>
+                <div>{domToReact(domNode.children as any, createOptions(fieldPrefix, imobilIndex))}</div>
                 <TextField
                   variant="filled"
                   size="small"
@@ -205,7 +286,8 @@ export default function CERERECERTIFICATDEURBANISMDEINFORMARE() {
       }
       return undefined;
     }
-  };
+  });
+  const options = createOptions();
 
   return (
     <div className="physical-form-container">
