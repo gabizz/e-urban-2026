@@ -13,6 +13,21 @@ function generateFieldName(text: string) {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '').substring(0, 30);
 }
 
+function getTableText(node: any): string {
+  let p = node.parent;
+  while (p && p.tagName !== 'table') {
+    p = p.parent;
+  }
+  if (!p) return '';
+  let txt = '';
+  const walk = (n: any) => {
+    if (n.type === 'text') txt += n.data;
+    if (n.children) n.children.forEach(walk);
+  };
+  walk(p);
+  return txt;
+}
+
 export default function ANEXAAUTORIZATIEDECONSTRUIRE() {
   const { register } = useFormContext();
 
